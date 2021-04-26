@@ -1,0 +1,6 @@
+[flake8]
+# D202 No blank lines allowed after function docstring: not compatible with black
+ignore = E203, E501, W503, W503, D105, D202
+extend-ignore = E203
+max-complexity = 10
+doctests = true
