@@ -4,13 +4,13 @@
 isort:skip_file
 """
 import multiprocessing
+import os
 from pathlib import Path
 from typing import List
 
 from setuptools import Distribution, Extension  # type: ignore
 from Cython.Build import cythonize  # type: ignore
 from Cython.Distutils.build_ext import new_build_ext as cython_build_ext  # type: ignore
-
 
 SOURCE_DIR = Path("src")
 BUILD_DIR = Path("cython_build")
@@ -30,7 +30,7 @@ def get_extension_modules() -> List[Extension]:
         sources = [str(source_path)]
         # Convert path to module name
         module_path = str(source_path.relative_to(SOURCE_DIR).with_suffix("")).replace(
-            "/", "."
+            os.sep, "."
         )
         extension_module = Extension(
             name=module_path,
@@ -49,7 +49,7 @@ def cythonize_helper(extension_modules: List[Extension], debug=True) -> List[Ext
     return cythonize(
         module_list=extension_modules,
         # Don't build in source tree (this leaves behind .c files)
-        build_dir=BUILD_DIR,
+        build_dir=str(BUILD_DIR),
         # Don't generate an .html output file. Would contain source.
         annotate=False,
         # Parallelize our build
@@ -69,7 +69,7 @@ def build(setup_kwargs=None, debug=False):
     distribution = Distribution(
         {
             "name": "subsequences",
-            "package_dir": {"": SOURCE_DIR},
+            "package_dir": {"": str(SOURCE_DIR)},
             "ext_modules": extension_modules,
             "cmdclass": {
                 "build_ext": cython_build_ext,

@@ -6,11 +6,14 @@ on:
       - created
 
 jobs:
-  publish:
-    runs-on: ubuntu-latest
+  build:
     strategy:
       matrix:
+        os: [ubuntu-18.04, macos-latest, windows-latest]
         python-version: [3.8, 3.9]
+        poetry-version: [1.1.4]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -18,11 +21,40 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install poetry
-      uses: abatilo/actions-poetry@v2.1.0
+      run: pip install poetry==${{ matrix.poetry-version }}
     - name: Install dependencies
       run: poetry run pip install Cython
     - name: Build package
       run: poetry build --format wheel
+    - name: Upload distribution artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: subsequences-dist
+        path: dist
+
+  release:
+    strategy:
+      matrix:
+        python-version: [3.9]
+        poetry-version: [1.1.4]
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Download distribution artifact
+      uses: actions/download-artifact@master
+      with:
+        name: subsequences-dist
+        path: dist
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+    - name: Install poetry
+      run: pip install poetry==${{ matrix.poetry-version }}
+    - name: Check distributions
+      run: |
+        ls -la dist
     - name: Publish
       env:
         PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
