@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "subsequences"
-version = "0.1.0"
+version = "0.1.1"
 description = "Tools for checking for subsequences and substrings"
 authors = ["Davis Kirkendall <davis.e.kirkendall@gmail.com>"]
 include = [
