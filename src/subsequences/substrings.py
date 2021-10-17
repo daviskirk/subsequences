@@ -12,13 +12,18 @@ def is_substring(subseq, seq):
     if m > n:
         return False
     j = 0
-    for i in range(n):
+    i = 0
+    while i < n:
         if seq[i] == subseq[j]:
             j += 1
             if j == m:
                 return True
+        elif j > 0:
+            j = 0
+            continue
         else:
             j = 0
             if n - i <= m:
                 return False
+        i += 1
     return False

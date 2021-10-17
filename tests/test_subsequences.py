@@ -10,11 +10,21 @@ def test_is_substring():
     r = is_substring(["b", "c"], seq)
     assert r is True
 
+    r = is_substring(["b", "c", "d"], seq)
+    assert r is True
+
     r = is_substring(["b", "d"], seq)
     assert r is False
 
     r = is_substring(["b", "a"], seq)
     assert r is False
+
+
+def test_is_substring_restart():
+    seq = ["b", "b", "c", "c"]
+
+    r = is_substring(["b", "c"], seq)
+    assert r is True
 
 
 def test_is_subsubsequence():
